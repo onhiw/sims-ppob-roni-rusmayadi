@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sims_ppob_roni_rusmayadi/common/constants.dart';
 import 'package:sims_ppob_roni_rusmayadi/common/exception.dart';
 import 'package:sims_ppob_roni_rusmayadi/data/models/message_model.dart';
@@ -22,8 +23,10 @@ class TransactionRemoteDataSourceImpl extends TransactionRemoteDataSource {
 
   @override
   Future<BalanceResponseModel> getBalance() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
     final response = await client.get(Uri.parse('$baseUrl/balance'),
-        headers: {"Authorization": 'Bearer'});
+        headers: {"Authorization": 'Bearer $token'});
 
     if (response.statusCode == 200) {
       return BalanceResponseModel.fromJson(json.decode(response.body));
@@ -34,8 +37,10 @@ class TransactionRemoteDataSourceImpl extends TransactionRemoteDataSource {
 
   @override
   Future<HistoryResponeModel> getHistory(int offset, int limit) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
     final response = await client.get(Uri.parse('$baseUrl/transaction/history'),
-        headers: {"Authorization": 'Bearer'});
+        headers: {"Authorization": 'Bearer $token'});
 
     if (response.statusCode == 200) {
       return HistoryResponeModel.fromJson(json.decode(response.body));
@@ -46,10 +51,12 @@ class TransactionRemoteDataSourceImpl extends TransactionRemoteDataSource {
 
   @override
   Future<MessageModel> postTopUp(int amount) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
     final response = await client.post(Uri.parse('$baseUrl/topup'),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer"
+          "Authorization": "Bearer $token"
         },
         body: jsonEncode({"top_up_amount": amount}));
 
@@ -63,10 +70,12 @@ class TransactionRemoteDataSourceImpl extends TransactionRemoteDataSource {
   @override
   Future<TransactionDetailResponseModel> postTransaction(
       String serviceCode) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
     final response = await client.post(Uri.parse('$baseUrl/transaction'),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer"
+          "Authorization": "Bearer $token"
         },
         body: jsonEncode({"service_code": serviceCode}));
 

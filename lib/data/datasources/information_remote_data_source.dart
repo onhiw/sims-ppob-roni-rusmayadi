@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sims_ppob_roni_rusmayadi/common/constants.dart';
 import 'package:sims_ppob_roni_rusmayadi/common/exception.dart';
 import 'package:sims_ppob_roni_rusmayadi/data/models/informations/banner_response_model.dart';
@@ -18,8 +19,10 @@ class InformationRemoteDataSourceImpl extends InformationRemoteDataSource {
 
   @override
   Future<BannerResponseModel> getBanner() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
     final response = await client.get(Uri.parse('$baseUrl/banner'),
-        headers: {"Authorization": 'Bearer'});
+        headers: {"Authorization": 'Bearer $token'});
 
     if (response.statusCode == 200) {
       return BannerResponseModel.fromJson(json.decode(response.body));
@@ -30,8 +33,10 @@ class InformationRemoteDataSourceImpl extends InformationRemoteDataSource {
 
   @override
   Future<ServicesResponseModel> getServices() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
     final response = await client.get(Uri.parse('$baseUrl/services'),
-        headers: {"Authorization": 'Bearer'});
+        headers: {"Authorization": 'Bearer $token'});
 
     if (response.statusCode == 200) {
       return ServicesResponseModel.fromJson(json.decode(response.body));

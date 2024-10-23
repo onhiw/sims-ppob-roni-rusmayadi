@@ -26,8 +26,10 @@ class MembershipRemoteDataSourceImpl extends MembershipRemoteDataSource {
 
   @override
   Future<UserResponseModel> getProfile() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
     final response = await client.get(Uri.parse('$baseUrl/profile'),
-        headers: {"Authorization": 'Bearer'});
+        headers: {"Authorization": 'Bearer $token'});
 
     if (response.statusCode == 200) {
       return UserResponseModel.fromJson(json.decode(response.body));
@@ -74,10 +76,12 @@ class MembershipRemoteDataSourceImpl extends MembershipRemoteDataSource {
   @override
   Future<UserResponseModel> putProfile(
       String firstname, String lastname) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
     final response = await client.put(Uri.parse('$baseUrl/profile/update'),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer"
+          "Authorization": "Bearer $token"
         },
         body: jsonEncode({"first_name": firstname, "last_name": lastname}));
 
@@ -90,6 +94,8 @@ class MembershipRemoteDataSourceImpl extends MembershipRemoteDataSource {
 
   @override
   Future<UserResponseModel> putProfileImage(File image) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
     final request = MultipartRequest(
       'POST',
       Uri.parse('$baseUrl/media/upload'),
@@ -97,7 +103,7 @@ class MembershipRemoteDataSourceImpl extends MembershipRemoteDataSource {
 
     Map<String, String> headers = {
       "Content-type": "multipart/form-data",
-      "Authorization": "Bearer"
+      "Authorization": "Bearer $token"
     };
 
     request.files.add(await MultipartFile.fromPath(
