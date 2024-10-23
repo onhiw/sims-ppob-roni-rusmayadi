@@ -6,6 +6,7 @@ import 'package:sims_ppob_roni_rusmayadi/injection.dart' as di;
 import 'package:sims_ppob_roni_rusmayadi/persentation/pages/page_root.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/providers/informations/banner_notifier.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/providers/informations/services_notifier.dart';
+import 'package:sims_ppob_roni_rusmayadi/persentation/providers/memberships/auth_notifier.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/providers/memberships/login_notifier.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/providers/memberships/profile_detail_notifier.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/providers/memberships/put_profile_image_notifier.dart';
@@ -28,6 +29,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+          create: (_) => di.locator<AuthProvider>(),
+        ),
         ChangeNotifierProvider(
           create: (_) => di.locator<ProfileDetailNotifier>(),
         ),

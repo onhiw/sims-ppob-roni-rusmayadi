@@ -1,5 +1,8 @@
 import 'package:http/http.dart' as http;
 import 'package:get_it/get_it.dart';
+import 'package:sims_ppob_roni_rusmayadi/data/datasources/information_remote_data_source.dart';
+import 'package:sims_ppob_roni_rusmayadi/data/datasources/membership_remote_data_source.dart';
+import 'package:sims_ppob_roni_rusmayadi/data/datasources/transaction_remote_data_source.dart';
 import 'package:sims_ppob_roni_rusmayadi/data/repositories/information_repository_impl.dart';
 import 'package:sims_ppob_roni_rusmayadi/data/repositories/membership_repository_impl.dart';
 import 'package:sims_ppob_roni_rusmayadi/data/repositories/transaction_repository_impl.dart';
@@ -19,6 +22,7 @@ import 'package:sims_ppob_roni_rusmayadi/domain/usecases/put_profile.dart';
 import 'package:sims_ppob_roni_rusmayadi/domain/usecases/put_profile_image.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/providers/informations/banner_notifier.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/providers/informations/services_notifier.dart';
+import 'package:sims_ppob_roni_rusmayadi/persentation/providers/memberships/auth_notifier.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/providers/memberships/login_notifier.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/providers/memberships/profile_detail_notifier.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/providers/memberships/put_profile_image_notifier.dart';
@@ -32,6 +36,9 @@ import 'package:sims_ppob_roni_rusmayadi/persentation/providers/transactions/tra
 final locator = GetIt.instance;
 
 void init() {
+  // provider auth
+  locator.registerFactory(() => AuthProvider());
+
   // provider membership
   locator.registerFactory(() => ProfileDetailNotifier(getProfile: locator()));
   locator.registerFactory(() => LoginNotifier(postLogin: locator()));
@@ -82,6 +89,18 @@ void init() {
   locator.registerLazySingleton<TransactionRepository>(
     () => TransactionRepositoryImpl(transactionRemoteDataSource: locator()),
   );
+
+  // data sources membership
+  locator.registerLazySingleton<MembershipRemoteDataSource>(
+      () => MembershipRemoteDataSourceImpl(client: locator()));
+
+  // data sources information
+  locator.registerLazySingleton<InformationRemoteDataSource>(
+      () => InformationRemoteDataSourceImpl(client: locator()));
+
+  // data sources membership
+  locator.registerLazySingleton<TransactionRemoteDataSource>(
+      () => TransactionRemoteDataSourceImpl(client: locator()));
 
   // external
   locator.registerLazySingleton(() => http.Client());

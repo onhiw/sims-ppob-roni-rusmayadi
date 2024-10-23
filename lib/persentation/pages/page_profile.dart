@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:sims_ppob_roni_rusmayadi/common/constants.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/pages/page_edit_profile.dart';
@@ -299,10 +300,13 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             GestureDetector(
               onTap: () {
-                Navigator.pushAndRemoveUntil(context,
-                    MaterialPageRoute(builder: (context) {
-                  return const LoginPage();
-                }), (route) => false);
+                SharedPreferences.getInstance().then((prefs) {
+                  prefs.setString('token', '');
+                  Navigator.pushAndRemoveUntil(context,
+                      MaterialPageRoute(builder: (context) {
+                    return const LoginPage();
+                  }), (route) => false);
+                });
               },
               child: Container(
                 height: 50,
