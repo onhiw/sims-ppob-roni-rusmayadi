@@ -25,6 +25,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
     final ImagePicker _picker = ImagePicker();
     XFile? foto;
 
+    final formKey = GlobalKey<FormState>();
+
+    bool validates() {
+      final form = formKey.currentState!;
+      if (form.validate()) {
+        form.save();
+        return true;
+      } else {
+        return false;
+      }
+    }
+
     void _pickImage() async {
       final imageSource = await showDialog<ImageSource>(
           context: context,
@@ -87,247 +99,274 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: GestureDetector(
-                onTap: () {
-                  _pickImage();
-                },
-                child: SizedBox(
-                  width: 120,
-                  height: 120,
-                  child: Stack(
-                    children: [
-                      Center(
-                        child: foto == null
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(120),
-                                child: CachedNetworkImage(
-                                  imageUrl: "",
-                                  width: 120,
-                                  height: 120,
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => Center(
-                                      child: Shimmer.fromColors(
-                                    baseColor: Colors.grey[300]!,
-                                    highlightColor: Colors.grey[100]!,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(120),
-                                        color: Colors.white,
+        child: Form(
+          key: formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: GestureDetector(
+                  onTap: () {
+                    _pickImage();
+                  },
+                  child: SizedBox(
+                    width: 120,
+                    height: 120,
+                    child: Stack(
+                      children: [
+                        Center(
+                          child: foto == null
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(120),
+                                  child: CachedNetworkImage(
+                                    imageUrl: "",
+                                    width: 120,
+                                    height: 120,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => Center(
+                                        child: Shimmer.fromColors(
+                                      baseColor: Colors.grey[300]!,
+                                      highlightColor: Colors.grey[100]!,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(120),
+                                          color: Colors.white,
+                                        ),
+                                        width: 120,
+                                        height: 120,
                                       ),
+                                    )),
+                                    imageBuilder: (context, imageProvider) =>
+                                        Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        image: DecorationImage(
+                                          image: imageProvider,
+                                          fit: BoxFit.contain,
+                                        ),
+                                      ),
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        ClipRRect(
+                                            child: Image.asset(
+                                      "assets/images/profile-photo-1.png",
+                                      fit: BoxFit.cover,
                                       width: 120,
                                       height: 120,
-                                    ),
-                                  )),
-                                  imageBuilder: (context, imageProvider) =>
-                                      Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      image: DecorationImage(
-                                        image: imageProvider,
-                                        fit: BoxFit.contain,
-                                      ),
-                                    ),
-                                  ),
-                                  errorWidget: (context, url, error) =>
-                                      ClipRRect(
-                                          child: Image.asset(
-                                    "assets/images/profile-photo-1.png",
-                                    fit: BoxFit.cover,
-                                    width: 120,
-                                    height: 120,
-                                  )),
-                                ),
-                              )
-                            : ClipRRect(
-                                borderRadius: BorderRadius.circular(120),
-                                child: FadeInImage(
-                                    fit: BoxFit.cover,
-                                    height: 120,
-                                    width: 120,
-                                    image: FileImage(File(foto!.path)),
-                                    placeholder: const AssetImage(
-                                      "assets/images/profile-photo-1.png",
                                     )),
+                                  ),
+                                )
+                              : ClipRRect(
+                                  borderRadius: BorderRadius.circular(120),
+                                  child: FadeInImage(
+                                      fit: BoxFit.cover,
+                                      height: 120,
+                                      width: 120,
+                                      image: FileImage(File(foto!.path)),
+                                      placeholder: const AssetImage(
+                                        "assets/images/profile-photo-1.png",
+                                      )),
+                                ),
+                        ),
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: Container(
+                            height: 35,
+                            width: 35,
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(35),
+                                border: Border.all(
+                                    width: 1, color: Colors.grey.shade300)),
+                            child: Center(
+                              child: Icon(
+                                Icons.edit,
+                                size: 20,
+                                color: Colors.grey.shade400,
                               ),
-                      ),
-                      Align(
-                        alignment: Alignment.bottomRight,
-                        child: Container(
-                          height: 35,
-                          width: 35,
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(35),
-                              border: Border.all(
-                                  width: 1, color: Colors.grey.shade300)),
-                          child: Center(
-                            child: Icon(
-                              Icons.edit,
-                              size: 20,
-                              color: Colors.grey.shade400,
                             ),
                           ),
-                        ),
-                      )
-                    ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            const Center(
-              child: Text(
-                'Kristanto Wibowo',
+              const SizedBox(
+                height: 16,
+              ),
+              const Center(
+                child: Text(
+                  'Kristanto Wibowo',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700),
+                ),
+              ),
+              const SizedBox(
+                height: 24,
+              ),
+              const Text(
+                'Email',
                 style: TextStyle(
                     color: Colors.black,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600),
               ),
-            ),
-            const SizedBox(
-              height: 24,
-            ),
-            const Text(
-              'Email',
-              style: TextStyle(
+              const SizedBox(
+                height: 16,
+              ),
+              TextFormField(
+                controller: textEditingEmail,
+                cursorColor: themeColor,
+                readOnly: true,
+                style: const TextStyle(
                   color: Colors.black,
+                  fontWeight: FontWeight.w400,
                   fontSize: 16,
-                  fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            TextFormField(
-              controller: textEditingEmail,
-              cursorColor: themeColor,
-              readOnly: true,
-              style: const TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.w400,
-                fontSize: 16,
+                ),
+                decoration: inputDecoration(
+                    'masukan email anda',
+                    const Icon(
+                      Icons.alternate_email,
+                      color: Colors.black,
+                      size: 24,
+                    )),
+                validator: (val) {
+                  if (val!.isEmpty) {
+                    return "Tidak boleh kosong";
+                  } else {
+                    return null;
+                  }
+                },
+                keyboardType: TextInputType.emailAddress,
               ),
-              decoration: inputDecoration(
-                  'masukan email anda',
-                  const Icon(
-                    Icons.alternate_email,
+              const SizedBox(
+                height: 24,
+              ),
+              const Text(
+                'Nama Depan',
+                style: TextStyle(
                     color: Colors.black,
-                    size: 24,
-                  )),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            const SizedBox(
-              height: 24,
-            ),
-            const Text(
-              'Nama Depan',
-              style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              TextFormField(
+                controller: textEditingFirstname,
+                cursorColor: themeColor,
+                style: const TextStyle(
                   color: Colors.black,
+                  fontWeight: FontWeight.w400,
                   fontSize: 16,
-                  fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            TextFormField(
-              controller: textEditingFirstname,
-              cursorColor: themeColor,
-              style: const TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.w400,
-                fontSize: 16,
+                ),
+                decoration: inputDecoration(
+                    'nama depan',
+                    const Icon(
+                      Icons.person_outline,
+                      color: Colors.black,
+                      size: 24,
+                    )),
+                validator: (val) {
+                  if (val!.isEmpty) {
+                    return "Tidak boleh kosong";
+                  } else {
+                    return null;
+                  }
+                },
+                keyboardType: TextInputType.name,
               ),
-              decoration: inputDecoration(
-                  'nama depan',
-                  const Icon(
-                    Icons.person_outline,
+              const SizedBox(
+                height: 24,
+              ),
+              const Text(
+                'Nama Belakang',
+                style: TextStyle(
                     color: Colors.black,
-                    size: 24,
-                  )),
-              keyboardType: TextInputType.name,
-            ),
-            const SizedBox(
-              height: 24,
-            ),
-            const Text(
-              'Nama Belakang',
-              style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              TextFormField(
+                controller: textEditingLastname,
+                cursorColor: themeColor,
+                style: const TextStyle(
                   color: Colors.black,
+                  fontWeight: FontWeight.w400,
                   fontSize: 16,
-                  fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            TextFormField(
-              controller: textEditingLastname,
-              cursorColor: themeColor,
-              style: const TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.w400,
-                fontSize: 16,
+                ),
+                decoration: inputDecoration(
+                    'nama belakang',
+                    const Icon(
+                      Icons.person_outline,
+                      color: Colors.black,
+                      size: 24,
+                    )),
+                validator: (val) {
+                  if (val!.isEmpty) {
+                    return "Tidak boleh kosong";
+                  } else {
+                    return null;
+                  }
+                },
+                keyboardType: TextInputType.name,
               ),
-              decoration: inputDecoration(
-                  'nama belakang',
-                  const Icon(
-                    Icons.person_outline,
-                    color: Colors.black,
-                    size: 24,
-                  )),
-              keyboardType: TextInputType.name,
-            ),
-            const SizedBox(
-              height: 48,
-            ),
-            GestureDetector(
-              onTap: () {},
-              child: Container(
-                height: 50,
-                decoration: BoxDecoration(
-                    color: themeColor, borderRadius: BorderRadius.circular(8)),
-                child: const Center(
-                  child: Text(
-                    'Simpan',
-                    style: TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700),
+              const SizedBox(
+                height: 48,
+              ),
+              GestureDetector(
+                onTap: () {
+                  if (validates()) {}
+                },
+                child: Container(
+                  height: 50,
+                  decoration: BoxDecoration(
+                      color: themeColor,
+                      borderRadius: BorderRadius.circular(8)),
+                  child: const Center(
+                    child: Text(
+                      'Simpan',
+                      style: TextStyle(
+                          fontSize: 16.0,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700),
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 24,
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: Container(
-                height: 50,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(width: 1, color: themeColor)),
-                child: const Center(
-                  child: Text(
-                    'Batalkan',
-                    style: TextStyle(
-                        fontSize: 16.0,
-                        color: themeColor,
-                        fontWeight: FontWeight.w700),
+              const SizedBox(
+                height: 24,
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  height: 50,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(width: 1, color: themeColor)),
+                  child: const Center(
+                    child: Text(
+                      'Batalkan',
+                      style: TextStyle(
+                          fontSize: 16.0,
+                          color: themeColor,
+                          fontWeight: FontWeight.w700),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
