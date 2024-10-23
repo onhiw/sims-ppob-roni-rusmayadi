@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sims_ppob_roni_rusmayadi/common/constants.dart';
 import 'package:sims_ppob_roni_rusmayadi/common/exception.dart';
 import 'package:sims_ppob_roni_rusmayadi/data/models/memberships/login_response_model.dart';
@@ -37,11 +38,14 @@ class MembershipRemoteDataSourceImpl extends MembershipRemoteDataSource {
 
   @override
   Future<LoginResponseModel> postLogin(String email, String password) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     final response = await client.post(Uri.parse('$baseUrl/login'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"email": email, "password": password}));
 
     if (response.statusCode == 200) {
+      await prefs.setString(
+          'token', json.decode(response.body)['data']['token']);
       return LoginResponseModel.fromJson(json.decode(response.body));
     } else {
       throw ServerException(json.decode(response.body)['message'] ?? "");

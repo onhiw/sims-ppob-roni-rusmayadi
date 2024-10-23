@@ -26,7 +26,7 @@ class LoadingIndicator extends StatelessWidget {
             style: TextStyle(
                 color: theme.brightness == Brightness.dark
                     ? Colors.white
-                    : textColor),
+                    : subTextColor),
           )
         ],
       )),

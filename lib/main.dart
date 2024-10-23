@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sims_ppob_roni_rusmayadi/common/utils.dart';
 import 'package:sims_ppob_roni_rusmayadi/injection.dart' as di;
-import 'package:sims_ppob_roni_rusmayadi/persentation/pages/page_home.dart';
+import 'package:sims_ppob_roni_rusmayadi/persentation/pages/page_root.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/providers/informations/banner_notifier.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/providers/informations/services_notifier.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/providers/memberships/login_notifier.dart';
@@ -67,12 +68,19 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,
+            textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
+            pageTransitionsTheme: const PageTransitionsTheme(
+              builders: <TargetPlatform, PageTransitionsBuilder>{
+                TargetPlatform.android: ZoomPageTransitionsBuilder(),
+                TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+              },
+            ),
           ),
           navigatorObservers: [routeObserver],
           onGenerateRoute: (settings) {
             switch (settings.name) {
               case '/':
-                return MaterialPageRoute(builder: (_) => const HomePage());
+                return MaterialPageRoute(builder: (_) => const Root());
               default:
                 return MaterialPageRoute(builder: (_) {
                   return const Scaffold(
