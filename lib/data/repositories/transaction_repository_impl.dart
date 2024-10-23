@@ -23,8 +23,7 @@ class TransactionRepositoryImpl extends TransactionRepository {
     } on ServerException catch (error) {
       return Left(ServerFailure(error.message));
     } on FormatException {
-      return const Left(ServerFailure(
-          'Oops, An error occurred while connecting to the server'));
+      return const Left(ServerFailure('Oops, Invalid format'));
     } on SocketException {
       return const Left(ServerFailure(
           'Oops, An error occurred while connecting to the server'));
@@ -40,8 +39,7 @@ class TransactionRepositoryImpl extends TransactionRepository {
     } on ServerException catch (error) {
       return Left(ServerFailure(error.message));
     } on FormatException {
-      return const Left(ServerFailure(
-          'Oops, An error occurred while connecting to the server'));
+      throw const Left(ServerFailure('Oops, Invalid format'));
     } on SocketException {
       return const Left(ServerFailure(
           'Oops, An error occurred while connecting to the server'));
@@ -56,8 +54,7 @@ class TransactionRepositoryImpl extends TransactionRepository {
     } on ServerException catch (error) {
       return Left(ServerFailure(error.message));
     } on FormatException {
-      return const Left(ServerFailure(
-          'Oops, An error occurred while connecting to the server'));
+      return const Left(ServerFailure('Oops, Invalid format'));
     } on SocketException {
       return const Left(ServerFailure(
           'Oops, An error occurred while connecting to the server'));
@@ -74,8 +71,7 @@ class TransactionRepositoryImpl extends TransactionRepository {
     } on ServerException catch (error) {
       return Left(ServerFailure(error.message));
     } on FormatException {
-      return const Left(ServerFailure(
-          'Oops, An error occurred while connecting to the server'));
+      return const Left(ServerFailure('Oops, Invalid format'));
     } on SocketException {
       return const Left(ServerFailure(
           'Oops, An error occurred while connecting to the server'));

@@ -3,8 +3,8 @@ import 'package:sims_ppob_roni_rusmayadi/data/models/transactions/record_history
 import 'package:sims_ppob_roni_rusmayadi/domain/entities/transactions/history.dart';
 
 class HistoryModel extends Equatable {
-  final int? offset;
-  final int? limit;
+  final String? offset;
+  final String? limit;
   final List<RecordHistoryModel>? records;
 
   const HistoryModel({

@@ -2,8 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:sims_ppob_roni_rusmayadi/domain/entities/transactions/record_history.dart';
 
 class History extends Equatable {
-  final int? offset;
-  final int? limit;
+  final String? offset;
+  final String? limit;
   final List<RecordHistory>? records;
 
   const History({

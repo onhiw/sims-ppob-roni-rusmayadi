@@ -39,7 +39,8 @@ class TransactionRemoteDataSourceImpl extends TransactionRemoteDataSource {
   Future<HistoryResponeModel> getHistory(int offset, int limit) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    final response = await client.get(Uri.parse('$baseUrl/transaction/history'),
+    final response = await client.get(
+        Uri.parse('$baseUrl/transaction/history?offset=$offset&limit=$limit'),
         headers: {"Authorization": 'Bearer $token'});
 
     if (response.statusCode == 200) {
