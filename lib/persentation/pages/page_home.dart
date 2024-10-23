@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
                 imageUrl: "",
                 width: 30,
                 height: 30,
-                fit: BoxFit.contain,
+                fit: BoxFit.cover,
                 placeholder: (context, url) => Center(
                     child: Shimmer.fromColors(
                   baseColor: Colors.grey[300]!,
@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
                     borderRadius: BorderRadius.circular(8),
                     image: DecorationImage(
                       image: imageProvider,
-                      fit: BoxFit.contain,
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),

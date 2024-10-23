@@ -143,7 +143,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                         borderRadius: BorderRadius.circular(8),
                                         image: DecorationImage(
                                           image: imageProvider,
-                                          fit: BoxFit.contain,
+                                          fit: BoxFit.cover,
                                         ),
                                       ),
                                     ),
