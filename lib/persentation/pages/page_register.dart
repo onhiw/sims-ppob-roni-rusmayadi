@@ -1,8 +1,13 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:sims_ppob_roni_rusmayadi/common/constants.dart';
+import 'package:sims_ppob_roni_rusmayadi/common/state_enum.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/pages/page_login.dart';
+import 'package:sims_ppob_roni_rusmayadi/persentation/providers/memberships/register_notifier.dart';
+import 'package:sims_ppob_roni_rusmayadi/persentation/widgets/button_loading_widget.dart';
+import 'package:sims_ppob_roni_rusmayadi/persentation/widgets/flushbar_widget.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/widgets/input_decoration.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -99,7 +104,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   },
                   style: const TextStyle(
                     color: Colors.black,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w400,
                     fontSize: 16,
                   ),
                   decoration: inputDecoration(
@@ -129,7 +134,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   },
                   style: const TextStyle(
                     color: Colors.black,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w400,
                     fontSize: 16,
                   ),
                   decoration: inputDecoration(
@@ -159,7 +164,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   },
                   style: const TextStyle(
                     color: Colors.black,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w400,
                     fontSize: 16,
                   ),
                   decoration: inputDecoration(
@@ -189,7 +194,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   },
                   style: const TextStyle(
                     color: Colors.black,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w400,
                     fontSize: 16,
                   ),
                   decoration: InputDecoration(
@@ -276,7 +281,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   },
                   style: const TextStyle(
                     color: Colors.black,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w400,
                     fontSize: 16,
                   ),
                   decoration: InputDecoration(
@@ -357,31 +362,53 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(
                   height: 24,
                 ),
-                GestureDetector(
-                  onTap: () {
-                    if (validates()) {
-                      Navigator.pushAndRemoveUntil(context,
-                          MaterialPageRoute(builder: (context) {
-                        return const LoginPage();
-                      }), (route) => false);
-                    }
-                  },
-                  child: Container(
-                    height: 50,
-                    decoration: BoxDecoration(
-                        color: themeColor,
-                        borderRadius: BorderRadius.circular(8)),
-                    child: const Center(
-                      child: Text(
-                        'Registrasi',
-                        style: TextStyle(
-                            fontSize: 16.0,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700),
+                Consumer<RegisterNotifier>(builder: (context, data, child) {
+                  return GestureDetector(
+                    onTap: () {
+                      if (validates()) {
+                        Provider.of<RegisterNotifier>(context, listen: false)
+                            .postRegisterProcess(
+                                textEditingEmail.text,
+                                textEditingFirstname.text,
+                                textEditingLastname.text,
+                                textEditingPassword.text)
+                            .then((value) {
+                          if (data.messageState == RequestState.Loaded) {
+                            Navigator.pushAndRemoveUntil(context,
+                                MaterialPageRoute(builder: (context) {
+                              return const LoginPage();
+                            }), (route) => false);
+                            flushbarMessage(
+                                    data.message.message!, textNormalColor)
+                                .show(context);
+                          }
+
+                          if (data.messageState == RequestState.Error) {
+                            flushbarMessage(data.messageErr, themeColor)
+                                .show(context);
+                          }
+                        });
+                      }
+                    },
+                    child: Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                          color: themeColor,
+                          borderRadius: BorderRadius.circular(8)),
+                      child: Center(
+                        child: data.messageState == RequestState.Loading
+                            ? const ButtonLoadingWidget(color: Colors.white)
+                            : const Text(
+                                'Registrasi',
+                                style: TextStyle(
+                                    fontSize: 16.0,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700),
+                              ),
                       ),
                     ),
-                  ),
-                ),
+                  );
+                }),
                 const SizedBox(
                   height: 24,
                 ),

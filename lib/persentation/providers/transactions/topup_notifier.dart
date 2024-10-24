@@ -17,7 +17,7 @@ class TopUpNotifier extends ChangeNotifier {
   String _messageErr = '';
   String get messageErr => _messageErr;
 
-  Future<void> postLoginProcess(int amount) async {
+  Future<void> postTopUpProcess(int amount) async {
     _messageState = RequestState.Loading;
     notifyListeners();
     final messageResult = await postTopUp.execute(amount);

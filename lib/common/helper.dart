@@ -17,6 +17,13 @@ class MyHelper {
     return format;
   }
 
+  static String formatCurrencyWithoutSymbol(double number) {
+    final NumberFormat fmt = NumberFormat.currency(locale: 'id', symbol: '');
+    String s = fmt.format(number);
+    String format = s.toString().replaceAll(RegExp(r"([,]*00)(?!.*\d)"), "");
+    return format;
+  }
+
   static String formatDateHms(DateTime dateTime) {
     initializeDateFormatting("id");
     return "${DateFormat.yMMMMd("id").format(dateTime)} ${DateFormat.Hm("id").format(dateTime)} WIB";

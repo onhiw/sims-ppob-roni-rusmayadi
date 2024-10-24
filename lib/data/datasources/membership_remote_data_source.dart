@@ -57,7 +57,7 @@ class MembershipRemoteDataSourceImpl extends MembershipRemoteDataSource {
   @override
   Future<MessageModel> postRegister(
       String email, String firstname, String lastname, String password) async {
-    final response = await client.post(Uri.parse('$baseUrl/register'),
+    final response = await client.post(Uri.parse('$baseUrl/registration'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "email": email,
@@ -98,7 +98,7 @@ class MembershipRemoteDataSourceImpl extends MembershipRemoteDataSource {
     String? token = prefs.getString('token');
     final request = MultipartRequest(
       'POST',
-      Uri.parse('$baseUrl/media/upload'),
+      Uri.parse('$baseUrl/profile/image'),
     );
 
     Map<String, String> headers = {

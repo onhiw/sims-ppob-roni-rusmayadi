@@ -5,9 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:sims_ppob_roni_rusmayadi/common/constants.dart';
 import 'package:sims_ppob_roni_rusmayadi/common/state_enum.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/pages/page_register.dart';
-import 'package:sims_ppob_roni_rusmayadi/persentation/providers/memberships/auth_notifier.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/providers/memberships/login_notifier.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/widgets/button_loading_widget.dart';
+import 'package:sims_ppob_roni_rusmayadi/persentation/widgets/flushbar_widget.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/widgets/home_widget.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/widgets/input_decoration.dart';
 
@@ -96,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                 },
                 style: const TextStyle(
                   color: Colors.black,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w400,
                   fontSize: 16,
                 ),
                 decoration: inputDecoration(
@@ -126,7 +126,7 @@ class _LoginPageState extends State<LoginPage> {
                 },
                 style: const TextStyle(
                   color: Colors.black,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w400,
                   fontSize: 16,
                 ),
                 decoration: InputDecoration(
@@ -208,26 +208,23 @@ class _LoginPageState extends State<LoginPage> {
               Consumer<LoginNotifier>(builder: (context, data, child) {
                 return GestureDetector(
                   onTap: () {
-                    if (data.loginState != RequestState.Loading) {
-                      if (validates()) {
-                        Future.microtask(() =>
-                            Provider.of<LoginNotifier>(context, listen: false)
-                                .postLoginProcess(textEditingEmail.text,
-                                    textEditingPassword.text)
-                                .then((value) {
-                              if (Provider.of<AuthProvider>(context,
-                                      listen: false)
-                                  .isLoggedIn) {
-                                WidgetsBinding.instance
-                                    .addPostFrameCallback((_) {
-                                  Navigator.pushAndRemoveUntil(context,
-                                      MaterialPageRoute(builder: (context) {
-                                    return const HomeWidget();
-                                  }), (route) => false);
-                                });
-                              }
-                            }));
-                      }
+                    if (validates()) {
+                      Provider.of<LoginNotifier>(context, listen: false)
+                          .postLoginProcess(
+                              textEditingEmail.text, textEditingPassword.text)
+                          .then((value) {
+                        if (data.loginState == RequestState.Loaded) {
+                          Navigator.pushAndRemoveUntil(context,
+                              MaterialPageRoute(builder: (context) {
+                            return const HomeWidget();
+                          }), (route) => false);
+                        }
+
+                        if (data.loginState == RequestState.Error) {
+                          flushbarMessage(data.message, themeColor)
+                              .show(context);
+                        }
+                      });
                     }
                   },
                   child: Container(
