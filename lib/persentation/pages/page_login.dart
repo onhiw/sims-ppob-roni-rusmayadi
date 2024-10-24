@@ -63,9 +63,9 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(
                     width: 8,
                   ),
-                  const Text(
+                  Text(
                     'SIMS PPOB',
-                    style: TextStyle(
+                    style: GoogleFonts.inter(
                         color: Colors.black,
                         fontSize: 18,
                         fontWeight: FontWeight.w700),
@@ -75,14 +75,14 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(
                 height: 32,
               ),
-              const Center(
+              Center(
                 child: Text(
                   'Masuk atau buat akun\nuntuk memulai',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: GoogleFonts.inter(
                       color: Colors.black,
                       fontSize: 24,
-                      fontWeight: FontWeight.w900),
+                      fontWeight: FontWeight.w700),
                 ),
               ),
               const SizedBox(

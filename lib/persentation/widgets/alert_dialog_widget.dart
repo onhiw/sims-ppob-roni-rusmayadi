@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:sims_ppob_roni_rusmayadi/common/constants.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/widgets/home_widget.dart';
 
@@ -24,7 +25,7 @@ AlertDialog alertDialog(BuildContext context, String image, String title,
           ),
           Text(
             nominal,
-            style: const TextStyle(
+            style: GoogleFonts.inter(
                 color: Colors.black, fontSize: 22, fontWeight: FontWeight.w700),
           ),
           const SizedBox(

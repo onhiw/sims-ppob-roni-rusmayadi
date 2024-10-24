@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:http/http.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sims_ppob_roni_rusmayadi/common/constants.dart';
 import 'package:sims_ppob_roni_rusmayadi/common/exception.dart';
@@ -16,7 +16,7 @@ abstract class MembershipRemoteDataSource {
   Future<MessageModel> postRegister(
       String email, String firstname, String lastname, String password);
   Future<UserResponseModel> putProfile(String firstname, String lastname);
-  Future<UserResponseModel> putProfileImage(File image);
+  Future<UserResponseModel> putProfileImage(XFile image);
 }
 
 class MembershipRemoteDataSourceImpl extends MembershipRemoteDataSource {
@@ -93,11 +93,11 @@ class MembershipRemoteDataSourceImpl extends MembershipRemoteDataSource {
   }
 
   @override
-  Future<UserResponseModel> putProfileImage(File image) async {
+  Future<UserResponseModel> putProfileImage(XFile image) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     final request = MultipartRequest(
-      'POST',
+      'PUT',
       Uri.parse('$baseUrl/profile/image'),
     );
 
@@ -109,7 +109,7 @@ class MembershipRemoteDataSourceImpl extends MembershipRemoteDataSource {
     request.files.add(await MultipartFile.fromPath(
       'file',
       image.path,
-      filename: image.path,
+      filename: image.name,
     ));
 
     request.headers.addAll(headers);

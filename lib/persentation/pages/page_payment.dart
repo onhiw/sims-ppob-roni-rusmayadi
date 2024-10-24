@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:sims_ppob_roni_rusmayadi/common/constants.dart';
@@ -7,6 +8,10 @@ import 'package:sims_ppob_roni_rusmayadi/common/helper.dart';
 import 'package:sims_ppob_roni_rusmayadi/common/state_enum.dart';
 import 'package:sims_ppob_roni_rusmayadi/domain/entities/informations/services.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/providers/transactions/balance_notifier.dart';
+import 'package:sims_ppob_roni_rusmayadi/persentation/providers/transactions/transaction_notifier.dart';
+import 'package:sims_ppob_roni_rusmayadi/persentation/widgets/alert_dialog_widget.dart';
+import 'package:sims_ppob_roni_rusmayadi/persentation/widgets/button_loading_widget.dart';
+import 'package:sims_ppob_roni_rusmayadi/persentation/widgets/home_widget.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/widgets/input_decoration.dart';
 
 class PaymentPage extends StatefulWidget {
@@ -36,9 +41,9 @@ class _PaymentPageState extends State<PaymentPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
-        title: const Text(
+        title: Text(
           'Pembayaran',
-          style: TextStyle(
+          style: GoogleFonts.inter(
               color: Colors.black, fontSize: 16, fontWeight: FontWeight.w700),
         ),
       ),
@@ -82,16 +87,16 @@ class _PaymentPageState extends State<PaymentPage> {
                             return Text(
                               MyHelper.formatCurrency(
                                   data.balance.data!.balance!.toDouble()),
-                              style: const TextStyle(
+                              style: GoogleFonts.inter(
                                   color: Colors.white,
                                   fontSize: 24,
                                   fontWeight: FontWeight.w700),
                             );
                           }
 
-                          return const Text(
+                          return Text(
                             "Rp",
-                            style: TextStyle(
+                            style: GoogleFonts.inter(
                                 color: Colors.white,
                                 fontSize: 24,
                                 fontWeight: FontWeight.w700),
@@ -189,7 +194,143 @@ class _PaymentPageState extends State<PaymentPage> {
               height: 120,
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Image.asset('assets/logos/logo.png', width: 72),
+                          const SizedBox(
+                            height: 24,
+                          ),
+                          Text(
+                            'Beli ${widget.services!.serviceName!} senilai',
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400),
+                          ),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          Text(
+                            "${MyHelper.formatCurrencyTopUp(widget.services!.serviceTariff!.toDouble())} ?",
+                            style: GoogleFonts.inter(
+                                color: Colors.black,
+                                fontSize: 22,
+                                fontWeight: FontWeight.w700),
+                          ),
+                          const SizedBox(
+                            height: 32,
+                          ),
+                          Consumer<TransactionNotifier>(
+                              builder: (context, data, child) {
+                            return GestureDetector(
+                              onTap: () {
+                                Provider.of<TransactionNotifier>(context,
+                                        listen: false)
+                                    .posttransactionDetailProcess(
+                                        widget.services!.serviceCode!)
+                                    .then((value) {
+                                  Navigator.pop(context);
+                                  if (data.transactionDetailState ==
+                                      RequestState.Loaded) {
+                                    showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) {
+                                        return WillPopScope(
+                                          onWillPop: () async {
+                                            Navigator.pushAndRemoveUntil(
+                                                context, MaterialPageRoute(
+                                                    builder: (context) {
+                                              return const HomeWidget();
+                                            }), (route) => false);
+                                            return true;
+                                          },
+                                          child: alertDialog(
+                                              context,
+                                              'assets/icons/ic_checklist.png',
+                                              'Pembayaran ${widget.services!.serviceName} sebesar',
+                                              MyHelper.formatCurrencyTopUp(
+                                                  widget
+                                                      .services!.serviceTariff!
+                                                      .toDouble()),
+                                              'berhasil'),
+                                        );
+                                      },
+                                    );
+                                  }
+
+                                  if (data.transactionDetailState ==
+                                      RequestState.Error) {
+                                    showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) {
+                                        return WillPopScope(
+                                          onWillPop: () async {
+                                            Navigator.pushAndRemoveUntil(
+                                                context, MaterialPageRoute(
+                                                    builder: (context) {
+                                              return const HomeWidget();
+                                            }), (route) => false);
+                                            return true;
+                                          },
+                                          child: alertDialog(
+                                              context,
+                                              'assets/icons/ic_cross.png',
+                                              'Pembayaran ${widget.services!.serviceName} sebesar',
+                                              MyHelper.formatCurrencyTopUp(
+                                                  widget
+                                                      .services!.serviceTariff!
+                                                      .toDouble()),
+                                              'gagal'),
+                                        );
+                                      },
+                                    );
+                                  }
+                                });
+                              },
+                              child: data.transactionDetailState ==
+                                      RequestState.Loading
+                                  ? const ButtonLoadingWidget(color: themeColor)
+                                  : const Text(
+                                      'Ya, lanjutkan Bayar',
+                                      style: TextStyle(
+                                          color: themeColor,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w700),
+                                    ),
+                            );
+                          }),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              'Batalkan',
+                              style: TextStyle(
+                                  color: Colors.grey.shade400,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
               child: Container(
                 height: 50,
                 decoration: BoxDecoration(

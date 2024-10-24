@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:sims_ppob_roni_rusmayadi/common/helper.dart';
@@ -51,9 +52,9 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(
                     width: 4,
                   ),
-                  const Text(
+                  Text(
                     'SIMS PPOB',
-                    style: TextStyle(
+                    style: GoogleFonts.inter(
                         color: Colors.black,
                         fontSize: 14,
                         fontWeight: FontWeight.w700),
@@ -136,7 +137,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           Text(
                             "${data.user.data!.firstName!} ${data.user.data!.lastName!}",
-                            style: const TextStyle(
+                            style: GoogleFonts.inter(
                                 color: Colors.black,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700),
@@ -193,7 +194,7 @@ class _HomePageState extends State<HomePage> {
                                                 .balance.data!.balance!
                                                 .toDouble())
                                             : "Rp. •••••••••",
-                                        style: const TextStyle(
+                                        style: GoogleFonts.inter(
                                             color: Colors.white,
                                             fontSize: 24,
                                             fontWeight: FontWeight.w700),
@@ -233,9 +234,9 @@ class _HomePageState extends State<HomePage> {
                                   );
                                 }
 
-                                return const Text(
+                                return Text(
                                   "Rp",
-                                  style: TextStyle(
+                                  style: GoogleFonts.inter(
                                       color: Colors.white,
                                       fontSize: 24,
                                       fontWeight: FontWeight.w700),

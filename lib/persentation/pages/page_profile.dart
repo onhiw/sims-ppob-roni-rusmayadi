@@ -10,6 +10,9 @@ import 'package:sims_ppob_roni_rusmayadi/common/state_enum.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/pages/page_edit_profile.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/pages/page_login.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/providers/memberships/profile_detail_notifier.dart';
+import 'package:sims_ppob_roni_rusmayadi/persentation/providers/memberships/put_profile_image_notifier.dart';
+import 'package:sims_ppob_roni_rusmayadi/persentation/widgets/button_loading_widget.dart';
+import 'package:sims_ppob_roni_rusmayadi/persentation/widgets/flushbar_widget.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/widgets/input_decoration.dart';
 import 'package:sims_ppob_roni_rusmayadi/persentation/widgets/loading_indicator.dart';
 
@@ -28,10 +31,10 @@ class _ProfilePageState extends State<ProfilePage> {
   final ImagePicker _picker = ImagePicker();
   XFile? foto;
 
-  void _pickImage() async {
+  void _pickImage(PutProfileImageNotifier data) async {
     final imageSource = await showDialog<ImageSource>(
         context: context,
-        builder: (context) => AlertDialog(
+        builder: (cn) => AlertDialog(
               backgroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8)),
@@ -67,11 +70,33 @@ class _ProfilePageState extends State<ProfilePage> {
             ));
 
     if (imageSource != null) {
-      final file = await _picker.pickImage(source: imageSource, maxHeight: 420);
+      final file = await _picker.pickImage(source: imageSource);
       if (file != null) {
         setState(() {
           foto = file;
         });
+
+        int size = await file.length();
+
+        if (size > 100000) {
+          flushbarMessage('Maksimum ukuran file 100kb', themeColor)
+              .show(context);
+        } else {
+          Provider.of<PutProfileImageNotifier>(context, listen: false)
+              .putUserProcess(file)
+              .then((value) {
+            if (data.userImageState == RequestState.Loaded) {
+              Future.microtask(() =>
+                  Provider.of<ProfileDetailNotifier>(context, listen: false)
+                      .fetchProfile());
+              flushbarMessage(data.message, textNormalColor).show(context);
+            }
+
+            if (data.userImageState == RequestState.Error) {
+              flushbarMessage(data.message, themeColor).show(context);
+            }
+          });
+        }
       }
     }
   }
@@ -90,9 +115,9 @@ class _ProfilePageState extends State<ProfilePage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
-        title: const Text(
+        title: Text(
           'Akun',
-          style: TextStyle(
+          style: GoogleFonts.inter(
               color: Colors.black, fontSize: 16, fontWeight: FontWeight.w700),
         ),
       ),
@@ -121,82 +146,94 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Center(
-                  child: GestureDetector(
-                    onTap: () {
-                      _pickImage();
-                    },
-                    child: SizedBox(
-                      width: 120,
-                      height: 120,
-                      child: Stack(
-                        children: [
-                          Center(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(120),
-                              child: CachedNetworkImage(
-                                imageUrl: data.user.data!.profileImage ?? "",
-                                width: 120,
-                                height: 120,
-                                fit: BoxFit.cover,
-                                placeholder: (context, url) => Center(
-                                    child: Shimmer.fromColors(
-                                  baseColor: Colors.grey[300]!,
-                                  highlightColor: Colors.grey[100]!,
-                                  child: Container(
-                                    decoration: BoxDecoration(
+                Consumer<PutProfileImageNotifier>(
+                    builder: (context, dataImage, child) {
+                  return Center(
+                    child: GestureDetector(
+                      onTap: () {
+                        _pickImage(dataImage);
+                      },
+                      child: SizedBox(
+                        width: 120,
+                        height: 120,
+                        child: dataImage.userImageState == RequestState.Loading
+                            ? const ButtonLoadingWidget(color: themeColor)
+                            : Stack(
+                                children: [
+                                  Center(
+                                    child: ClipRRect(
                                       borderRadius: BorderRadius.circular(120),
-                                      color: Colors.white,
+                                      child: CachedNetworkImage(
+                                        imageUrl:
+                                            data.user.data!.profileImage ?? "",
+                                        width: 120,
+                                        height: 120,
+                                        fit: BoxFit.cover,
+                                        placeholder: (context, url) => Center(
+                                            child: Shimmer.fromColors(
+                                          baseColor: Colors.grey[300]!,
+                                          highlightColor: Colors.grey[100]!,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(120),
+                                              color: Colors.white,
+                                            ),
+                                            width: 120,
+                                            height: 120,
+                                          ),
+                                        )),
+                                        imageBuilder:
+                                            (context, imageProvider) =>
+                                                Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            image: DecorationImage(
+                                              image: imageProvider,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        errorWidget: (context, url, error) =>
+                                            ClipRRect(
+                                                child: Image.asset(
+                                          "assets/images/profile-photo-1.png",
+                                          fit: BoxFit.cover,
+                                          width: 120,
+                                          height: 120,
+                                        )),
+                                      ),
                                     ),
-                                    width: 120,
-                                    height: 120,
                                   ),
-                                )),
-                                imageBuilder: (context, imageProvider) =>
-                                    Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    image: DecorationImage(
-                                      image: imageProvider,
-                                      fit: BoxFit.cover,
+                                  Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: Container(
+                                      height: 35,
+                                      width: 35,
+                                      padding: const EdgeInsets.all(4),
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(35),
+                                          border: Border.all(
+                                              width: 1,
+                                              color: Colors.grey.shade300)),
+                                      child: Center(
+                                        child: Icon(
+                                          Icons.edit,
+                                          size: 20,
+                                          color: Colors.grey.shade400,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                                errorWidget: (context, url, error) => ClipRRect(
-                                    child: Image.asset(
-                                  "assets/images/profile-photo-1.png",
-                                  fit: BoxFit.cover,
-                                  width: 120,
-                                  height: 120,
-                                )),
+                                  )
+                                ],
                               ),
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.bottomRight,
-                            child: Container(
-                              height: 35,
-                              width: 35,
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(35),
-                                  border: Border.all(
-                                      width: 1, color: Colors.grey.shade300)),
-                              child: Center(
-                                child: Icon(
-                                  Icons.edit,
-                                  size: 20,
-                                  color: Colors.grey.shade400,
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
                       ),
                     ),
-                  ),
-                ),
+                  );
+                }),
                 const SizedBox(
                   height: 16,
                 ),
@@ -204,7 +241,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Text(
                     "${data.user.data!.firstName!} ${data.user.data!.lastName!}",
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: GoogleFonts.inter(
                         color: Colors.black,
                         fontSize: 24,
                         fontWeight: FontWeight.w700),

@@ -43,7 +43,8 @@ void init() {
   locator.registerFactory(() => ProfileDetailNotifier(getProfile: locator()));
   locator.registerFactory(() => LoginNotifier(postLogin: locator()));
   locator.registerFactory(() => RegisterNotifier(postRegister: locator()));
-  locator.registerFactory(() => PutProfileNotifier(putProfile: locator()));
+  locator.registerFactory(() =>
+      PutProfileNotifier(putProfile: locator(), putProfileImage: locator()));
   locator.registerFactory(
       () => PutProfileImageNotifier(putProfileImage: locator()));
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sims_ppob_roni_rusmayadi/common/constants.dart';
 import 'package:sims_ppob_roni_rusmayadi/common/helper.dart';
@@ -30,9 +31,9 @@ class _TransactionPageState extends State<TransactionPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
-        title: const Text(
+        title: Text(
           'Transaksi',
-          style: TextStyle(
+          style: GoogleFonts.inter(
               color: Colors.black, fontSize: 16, fontWeight: FontWeight.w700),
         ),
       ),
@@ -76,16 +77,16 @@ class _TransactionPageState extends State<TransactionPage> {
                             return Text(
                               MyHelper.formatCurrency(
                                   data.balance.data!.balance!.toDouble()),
-                              style: const TextStyle(
+                              style: GoogleFonts.inter(
                                   color: Colors.white,
                                   fontSize: 24,
                                   fontWeight: FontWeight.w700),
                             );
                           }
 
-                          return const Text(
+                          return Text(
                             "Rp",
-                            style: TextStyle(
+                            style: GoogleFonts.inter(
                                 color: Colors.white,
                                 fontSize: 24,
                                 fontWeight: FontWeight.w700),

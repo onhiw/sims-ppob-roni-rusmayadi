@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:sims_ppob_roni_rusmayadi/common/exception.dart';
 import 'package:sims_ppob_roni_rusmayadi/common/failure.dart';
 import 'package:sims_ppob_roni_rusmayadi/data/datasources/membership_remote_data_source.dart';
@@ -64,7 +65,7 @@ class MembershipRepositoryImpl extends MembershipRepository {
   }
 
   @override
-  Future<Either<Failure, UserR>> putImageProfile(File image) async {
+  Future<Either<Failure, UserR>> putImageProfile(XFile image) async {
     try {
       final result = await membershipRemoteDataSource.putProfileImage(image);
       return Right(result.toEntity());
