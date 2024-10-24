@@ -216,7 +216,7 @@ class _TransactionPageState extends State<TransactionPage> {
                                 Future.microtask(() =>
                                     Provider.of<HistoryNotifier>(context,
                                             listen: false)
-                                        .fetchhistory(offset, 5));
+                                        .fetchhistory(offset, limit));
                               },
                               child: const Center(
                                 child: Text(
