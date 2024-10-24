@@ -17,13 +17,14 @@ class TransactionPage extends StatefulWidget {
 
 class _TransactionPageState extends State<TransactionPage> {
   int offset = 0;
+  int limit = 5;
   @override
   void initState() {
     Future.microtask(() {
       Provider.of<BalanceNotifier>(context, listen: false).fetchBalance();
       Provider.of<HistoryNotifier>(context, listen: false).clearHistory();
       Provider.of<HistoryNotifier>(context, listen: false)
-          .fetchhistory(offset, 5);
+          .fetchhistory(offset, limit);
     });
     super.initState();
   }
@@ -135,74 +136,81 @@ class _TransactionPageState extends State<TransactionPage> {
                 }
 
                 if (data.historyState == RequestState.Loaded) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ...data.records.map((transaction) => Container(
-                            padding: const EdgeInsets.all(12),
-                            margin: const EdgeInsets.only(bottom: 16.0),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                    width: 1, color: Colors.grey.shade300)),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      (transaction.transactionType == "TOPUP"
-                                              ? "+ "
-                                              : "- ") +
-                                          MyHelper.formatCurrency(transaction
-                                                  .totalAmount!
-                                                  .toDouble())
-                                              .replaceAll(' ', ''),
-                                      style: TextStyle(
-                                          fontSize: 16.0,
-                                          color: transaction.transactionType ==
-                                                  "TOPUP"
-                                              ? textNormalColor
-                                              : textMinusColor,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                    Text(
-                                      transaction.description ?? "-",
-                                      style: const TextStyle(
-                                          fontSize: 12.0,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 4,
-                                ),
-                                Text(
-                                  transaction.createdOn == null
-                                      ? "-"
-                                      : MyHelper.formatDateHms(
-                                          transaction.createdOn!),
-                                  style: TextStyle(
-                                      fontSize: 10.0,
-                                      color: Colors.grey.shade400,
-                                      fontWeight: FontWeight.w400),
-                                ),
-                              ],
+                  return data.records.isEmpty
+                      ? const Center(
+                          child:
+                              Text('Maaf tidak ada history transaksi saat ini'),
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ...data.records.map((transaction) => Container(
+                                  padding: const EdgeInsets.all(12),
+                                  margin: const EdgeInsets.only(bottom: 16.0),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                          width: 1,
+                                          color: Colors.grey.shade300)),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            (transaction.transactionType ==
+                                                        "TOPUP"
+                                                    ? "+ "
+                                                    : "- ") +
+                                                MyHelper.formatCurrency(
+                                                        transaction.totalAmount!
+                                                            .toDouble())
+                                                    .replaceAll(' ', ''),
+                                            style: TextStyle(
+                                                fontSize: 16.0,
+                                                color: transaction
+                                                            .transactionType ==
+                                                        "TOPUP"
+                                                    ? textNormalColor
+                                                    : textMinusColor,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                          Text(
+                                            transaction.description ?? "-",
+                                            style: const TextStyle(
+                                                fontSize: 12.0,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 4,
+                                      ),
+                                      Text(
+                                        transaction.createdOn == null
+                                            ? "-"
+                                            : MyHelper.formatDateHms(
+                                                transaction.createdOn!),
+                                        style: TextStyle(
+                                            fontSize: 10.0,
+                                            color: Colors.grey.shade400,
+                                            fontWeight: FontWeight.w400),
+                                      ),
+                                    ],
+                                  ),
+                                )),
+                            const SizedBox(
+                              height: 24,
                             ),
-                          )),
-                      const SizedBox(
-                        height: 24,
-                      ),
-                      data.history.data!.records!.length < 5
-                          ? Container()
-                          : GestureDetector(
+                            GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  offset = offset + 1;
+                                  offset = offset + limit;
                                 });
 
                                 Future.microtask(() =>
@@ -220,8 +228,8 @@ class _TransactionPageState extends State<TransactionPage> {
                                 ),
                               ),
                             )
-                    ],
-                  );
+                          ],
+                        );
                 }
                 return Container();
               },

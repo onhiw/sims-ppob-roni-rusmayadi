@@ -33,15 +33,10 @@ class HistoryNotifier extends ChangeNotifier {
     }, (historyR) {
       _history = historyR;
       notifyListeners();
-      if (_history.data!.records!.isEmpty) {
-        _historyState = RequestState.Empty;
-        notifyListeners();
-      } else {
-        _records.addAll(_history.data!.records!);
-        notifyListeners();
-        _historyState = RequestState.Loaded;
-        notifyListeners();
-      }
+      _records.addAll(_history.data!.records!);
+      notifyListeners();
+      _historyState = RequestState.Loaded;
+      notifyListeners();
     });
   }
 
